@@ -1,0 +1,6 @@
+*.cpp
+*.o
+*.def
+*.pyc
+*.pyd
+doc/build
