@@ -13,10 +13,15 @@ if 'PYS2TALK_INCLUDE' in os.environ:
     includes.insert(0, os.environ['PYS2TALK_INCLUDE'])
 
 
-sources = [
+sources = ['talker.pyx',
+           'timer.pyx',
+           'exception.pyx',
            ]
 
-dependencies = {}
+dependencies = {'talker.pyx': ['talker.pxd', 'exception.pyx'],
+                'timer.pyx': ['timer.pxd'],
+                'exception.pyx': []
+                }
 
 
 def get_modulename_from_file(filename):
