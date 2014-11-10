@@ -5,10 +5,13 @@ from libc.stdint cimport int64_t, uint64_t, int32_t, uint32_t, uint16_t,\
 int16_t, uint8_t, int8_t, uintptr_t
 from libcpp cimport bool
 
+cdef extern from 'Windows.h' nogil:
+    pass
 
 cdef extern from * nogil:
     ctypedef unsigned long DWORD
     ctypedef unsigned long ULONG
+    ctypedef int64_t LONGLONG
     ctypedef int BOOL
     ctypedef void *HANDLE
     ctypedef char *LPSTR
@@ -28,9 +31,10 @@ cdef extern from * nogil:
     ctypedef _OVERLAPPED OVERLAPPED
     ctypedef _OVERLAPPED *LPOVERLAPPED
     union _LARGE_INTEGER:
-        pass
+        LONGLONG QuadPart
     ctypedef _LARGE_INTEGER LARGE_INTEGER
 
+    LONGLONG LLONG_MAX
     DWORD OPEN_EXISTING
     DWORD ERROR_PIPE_BUSY
     DWORD PIPE_READMODE_MESSAGE
@@ -62,12 +66,19 @@ cdef extern from * nogil:
         DWORD dwMessageId, DWORD dwLanguageId, LPSTR lpBuffer, DWORD nSize,
         va_list *Arguments)
     HLOCAL __stdcall LocalFree(HLOCAL hMem)
+    BOOL __stdcall QueryPerformanceCounter(LARGE_INTEGER *lpPerformanceCount)
+    BOOL __stdcall QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency)
 
+
+DEF TALK_NAME_SZ = 12
+DEF TALK_DESC_SZ = 60
+DEF TALK_CTITL_SZ = 12
+DEF TALK_CUNIT_SZ = 8
 
 cdef extern from "s2talk.h":
     int TALK_SPEC_VER
-    bytes TALK_MASTER_PIPE
-    bytes TALK_TALKER_PIPE
+    char *TALK_MASTER_PIPE
+    char *TALK_TALKER_PIPE
     DWORD TALK_TALKER_BSIZE
     DWORD TALK_MAX_PKT
 
@@ -117,15 +128,15 @@ cdef extern from "s2talk.h":
 
     DWORD TKC_EXTRA_TIMEOUT
 
-    DWORD TKE_BAD_PACKET
-    DWORD TKE_BAD_VERSION
-    DWORD TKE_BAD_COMMAND
-    DWORD TKE_BAD_CHAN
-    DWORD TKE_TIMEOUT
-    DWORD TKE_NO_CONFIG
-    DWORD TKE_BAD_CONFIG
-    DWORD TKE_FAILURE
-    DWORD TKE_BAD_PARAMS
+    int TKE_BAD_PACKET
+    int TKE_BAD_VERSION
+    int TKE_BAD_COMMAND
+    int TKE_BAD_CHAN
+    int TKE_TIMEOUT
+    int TKE_NO_CONFIG
+    int TKE_BAD_CONFIG
+    int TKE_FAILURE
+    int TKE_BAD_PARAMS
 
     struct TalkPacket:
         int nSize
